@@ -7,6 +7,11 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/register', function(req, res, next) {
+  console.log(req.body.username);
+  console.log(req.body.email);
+  console.log(req.body.password);
+
+  const db = require('../db.js');
   res.render('index', { title: 'Registration Complete' });
 });
 
