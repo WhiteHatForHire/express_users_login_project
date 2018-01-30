@@ -8,6 +8,7 @@ var expressValidator = require('express-validator');
 
 // Authentication Packages
 var session = require('express-session');
+var passport = require('passport');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
@@ -27,6 +28,19 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(expressValidator());
 app.use(cookieParser());
+
+// Express Session Cookie
+app.use(session({
+  secret: 'eiwokdjflaehinfoow',
+  resave: false,
+  saveUninitialized: false,
+  // cookie: { secure: true }
+}));
+
+// Passport initialization
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
