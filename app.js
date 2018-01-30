@@ -6,6 +6,9 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var expressValidator = require('express-validator');
 
+// Authentication Packages
+var session = require('express-session');
+
 var index = require('./routes/index');
 var users = require('./routes/users');
 
