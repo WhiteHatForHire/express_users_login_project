@@ -3,6 +3,9 @@ var router = express.Router();
 
 var expressValidator = require('express-validator');
 
+var bcrypt = require('bcrypt');
+const saltRounds = 10;
+
 
 /* GET home page. */
 router.get("/register", function(req, res, next) {
@@ -35,19 +38,22 @@ router.post("/register", function(req, res, next) {
   } else {
     const db = require("../db.js");
 
-    // Entering with auto escaping to protect against malicious code
-    db.query(
-      "INSERT INTO  users (username, email, password) VALUES (?,?,?)",
-      [username, email, password],
-      function(error, result, fields) {
-        if (error) throw error;
+    bcrypt.hash(password, saltRounds, function(err, hash) {
+      // Store hash in your password DB.
+      db.query(
+      // Entering with auto escaping to protect against malicious code
+        "INSERT INTO  users (username, email, password) VALUES (?,?,?)",
+        [username, email, hash],
+        function(error, result, fields) {
+          if (error) throw error;
 
-        res.render("register", {
-          title: "Registration Complete",
-          success: "You have successfully registered"
-        });
-      }
-    );
+          res.render("register", {
+            title: "Registration Complete",
+            success: "You have successfully registered"
+          });
+        }
+      );
+    });
   }
   
 });
