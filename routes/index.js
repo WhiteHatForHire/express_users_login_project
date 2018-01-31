@@ -5,6 +5,7 @@ var expressValidator = require('express-validator');
 var passport = require('passport');
 
 
+
 var bcrypt = require('bcrypt');
 const saltRounds = 10;
 
@@ -31,6 +32,12 @@ router.get('/profile', authenticationMiddleware(),function(req, res){
 /* GET login page. */
 router.get('/login', function(req, res){
   res.render('login', {title: 'Login'});
+});
+/* GET logout page and session logout. */
+router.get('/logout', function(req, res){
+  req.logout();
+  req.session.destroy();
+  res.redirect('/');
 });
 
 // POST LOGIN

@@ -9,7 +9,11 @@ var expressValidator = require("express-validator");
 // Authentication Packages
 var session = require("express-session");
 var passport = require("passport");
+var LocalStrategy = require("passport-local")
+  .Strategy; /* this should be after passport*/
 var MySQLStore = require("express-mysql-session")(session);
+var bcrypt = require('bcrypt');
+
 
 var index = require("./routes/index");
 var users = require("./routes/users");
@@ -60,6 +64,33 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", index);
 app.use("/users", users);
+
+// PASSPORT LOCAL STRATEGY
+passport.use(new LocalStrategy(
+    function(username, password, done) {
+    console.log(username);
+    console.log(password);
+    const db = require("./db");
+    // VALIDATE USER
+    db.query("SELECT id, password FROM users WHERE username = ?",[username],function(err, results, fields) {
+        if(err) {done(err)};
+
+        if(results.length === 0) {
+          done(null, false);
+        } else {
+          // COMPARE PASWORD TO HASHED IN DB (must convert from buffer with toString())
+          const hash = (results[0].password.toString());
+          bcrypt.compare(password, hash, function(err, response){
+          if (response === true) {
+            return done(null, {user_id: results[0].id});
+          } else {
+            return done(null, false);
+          }
+        });
+        }
+    })
+  }
+));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
