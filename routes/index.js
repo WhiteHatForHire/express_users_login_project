@@ -33,6 +33,13 @@ router.get('/login', function(req, res){
   res.render('login', {title: 'Login'});
 });
 
+// POST LOGIN
+router.post("/login", passport.authenticate(
+  'local', {
+    successRedirect : '/profile',
+    failureRedirect: '/login'
+  }));
+
 
 // add user to db
 router.post("/register", function(req, res, next) {
