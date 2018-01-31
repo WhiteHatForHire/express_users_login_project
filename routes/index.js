@@ -15,6 +15,8 @@ router.get("/register", function(req, res, next) {
 });
 /* GET home page. */
 router.get("/", function(req, res) {
+	console.log(req.user);
+	console.log(req.isAuthenticated());
   res.render("home", { title: "Home" });
 });
 
@@ -40,7 +42,7 @@ router.post("/register", function(req, res, next) {
     console.log(`errors: ${JSON.stringify(errors)}`);
 
     res.render("register", { title: "Registration Error", errors: errors });
-    return;
+    // return;
   } else {
     const db = require("../db.js");
 
@@ -55,18 +57,20 @@ router.post("/register", function(req, res, next) {
 
 
           db.query('SELECT LAST_INSERT_ID() as user_id', function(error, results, fields){
-            if(error) throw error;
+						if(error) throw error;
+						
 
 						const user_id = results[0];
 						console.log(results[0]);
             req.login(user_id, function(err) {
+							
 							res.redirect('/');
 						});
-
-            res.render("register", {
-              title: "Registration Complete",
-              success: "You have successfully registered"
-            });	
+						// res.render("register", {
+						// 	title: "Registration Complete",
+						// 	success: "You have successfully registered"
+						// });	
+            
           });
         }
 
