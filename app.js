@@ -37,14 +37,16 @@ var options = {
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   port: process.env.DB_PORT
-  // socketPath: "C:/xampp/mysql/mysql.sock"
 };
+
+var sessionStore = new MySQLStore(options);
 
 // Express Session Cookie
 app.use(
   session({
     secret: "eiwokdjflaehinfoow",
     resave: false,
+    store: sessionStore,
     saveUninitialized: false
     // cookie: { secure: true }
   })

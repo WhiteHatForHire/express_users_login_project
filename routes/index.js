@@ -20,6 +20,20 @@ router.get("/", function(req, res) {
   res.render("home", { title: "Home" });
 });
 
+/* GET profile page. */
+// Here we call the authenticationMiddleware function to restrict access to this
+// particular view, the profile page. Users without permission will get redirected to the 
+// Login page 
+// THIS CAN BE CHANGED I THINK TO DIRECT TO OTHER PAGES DEPENDING ON CIRCUMSTANCES
+router.get('/profile', authenticationMiddleware(),function(req, res){
+  res.render('profile', {title: 'Profile'});
+});
+/* GET login page. */
+router.get('/login', function(req, res){
+  res.render('login', {title: 'Login'});
+});
+
+
 // add user to db
 router.post("/register", function(req, res, next) {
   const username = req.body.username;
@@ -27,6 +41,7 @@ router.post("/register", function(req, res, next) {
   const password = req.body.password;
 
   // VALIDATION with express-validator
+  // THESE ARE VERY STRICT, MAY WANT TO REVISIT
   req.checkBody('username', 'Username fields cannot be empty.').notEmpty();
   req.checkBody('username', 'Username must be between 4-15 characters long').len(4, 15);
   req.checkBody('email', 'The email you entered is invalid, please try again').isEmail();
@@ -86,5 +101,15 @@ passport.serializeUser(function(user_id, done) {
 passport.deserializeUser(function(user_id, done) {
     done(null, user_id);
 });
+
+// Restricted access
+function authenticationMiddleware () {  
+	return (req, res, next) => {
+		console.log(`req.session.passport.user: ${JSON.stringify(req.session.passport)}`);
+
+	    if (req.isAuthenticated()) return next();
+	    res.redirect('/login');
+	};
+}
 
 module.exports = router;
